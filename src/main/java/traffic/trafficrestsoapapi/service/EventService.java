@@ -1,22 +1,40 @@
 package traffic.trafficrestsoapapi.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import traffic.trafficrestsoapapi.entity.Event;
+import traffic.trafficrestsoapapi.entity.Notification;
+import traffic.trafficrestsoapapi.entity.User;
+
 import org.springframework.stereotype.Service;
 import traffic.trafficrestsoapapi.repo.EventRepository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class EventService {
     private final EventRepository eventRepository;
+    @Autowired
+    private NotificationService notificationService;
+
+    @Autowired
+    private UserService userService;
 
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
+
     }
 
     public Event createEvent(Event event) {
-        return eventRepository.save(event);
+        Event createdEvent = eventRepository.save(event);
+        List<User> allUsers = userService.getUsersByPosition(event.getAddress());
+
+        for (User user : allUsers) {
+            // Customize the message, createdAt, etc. based on your requirements
+            notificationService.createNotification(user, createdEvent, createdEvent.getTitle(), new Date());
+        }
+    return createdEvent;
     }
 
     public List<Event> getAllEvents() {
