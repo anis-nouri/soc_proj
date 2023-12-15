@@ -1,4 +1,4 @@
-package traffic.trafficrestsoapapi.controller;
+package traffic.trafficrestsoapapi.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

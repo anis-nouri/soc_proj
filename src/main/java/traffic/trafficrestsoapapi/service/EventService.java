@@ -14,17 +14,14 @@ import java.util.Optional;
 
 @Service
 public class EventService {
-    private final EventRepository eventRepository;
+    @Autowired
+    private EventRepository eventRepository;
+
     @Autowired
     private NotificationService notificationService;
 
     @Autowired
     private UserService userService;
-
-    public EventService(EventRepository eventRepository) {
-        this.eventRepository = eventRepository;
-
-    }
 
     public Event createEvent(Event event) {
         Event createdEvent = eventRepository.save(event);

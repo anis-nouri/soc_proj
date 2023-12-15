@@ -1,14 +1,23 @@
 package traffic.trafficrestsoapapi.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlElement;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
+
+import jakarta.persistence.*;
+
+import java.util.List;
+
 @Entity
+@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class User {
     @Id
     private String username;
@@ -17,4 +26,6 @@ public class User {
     private String prenom;
     private String lieu ;
     private String position;
+
+
 }

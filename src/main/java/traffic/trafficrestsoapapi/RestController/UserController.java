@@ -1,10 +1,15 @@
-package traffic.trafficrestsoapapi.controller;
+package traffic.trafficrestsoapapi.RestController;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.ws.server.endpoint.annotation.Endpoint;
+import org.springframework.ws.server.endpoint.annotation.PayloadRoot;
+import org.springframework.ws.server.endpoint.annotation.ResponsePayload;
+import traffic.trafficrestsoapapi.DTO.UserDTO;
 import traffic.trafficrestsoapapi.entity.User;
 import traffic.trafficrestsoapapi.service.UserService;
 
@@ -29,6 +34,7 @@ public class UserController {
     }
 
     @GetMapping("/{username}")
+
     public ResponseEntity<User> getUserById(@PathVariable String username) {
         Optional<User> user = userService.getUserById(username);
         return user.map(value -> new ResponseEntity<>(value, HttpStatus.OK))
@@ -59,16 +65,29 @@ public class UserController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody User loginUser) {
+public ResponseEntity<UserDTO> login(@RequestBody User loginUser) {
         // Retrieve user by username
         Optional<User> user = userService.getUserById(loginUser.getUsername());
 
         if (user.isPresent() && passwordEncoder.matches(loginUser.getPassword(), user.get().getPassword())) {
             // User is authenticated
-            return ResponseEntity.ok("Login successful!");
+            User authenticatedUser = user.get();
+
+            // Create a UserDTO object with the necessary fields
+            UserDTO response = new UserDTO(
+                    authenticatedUser.getUsername(),
+                    authenticatedUser.getNom(),
+                    authenticatedUser.getPrenom(),
+                    authenticatedUser.getLieu(),
+                    authenticatedUser.getPosition());
+            return ResponseEntity.ok().contentType(MediaType.APPLICATION_JSON)
+                    .body(response);
         } else {
-            // Authentication failed
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+            UserDTO errorResponse = new UserDTO(null, null, null, null, null);
+
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .body(errorResponse);
         }
-    }
+        }
 }
